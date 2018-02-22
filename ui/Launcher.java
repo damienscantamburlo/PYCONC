@@ -150,26 +150,16 @@ class Launcher {
        closePlot = true;
     }
 
-    if(fileName.equals("Default"))
-		computeModel();
-	else{
-			String str = "";
-		try{
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-			String string = br.readLine();
-			while(string!=null){
-				str+=string+"\n";
-				string = br.readLine();
-			}
-		}
-		catch(IOException e){
+    if(fileName.equals("Default")){
+                //Please put your corresponding java file in the INPUT folder
+                String name = "simple_column.jconc";
+                
+                String fileName = System.getProperty("user.dir") + "\\src\\net\\cercis\\jconc\\input\\" + name;
+                System.out.println("FORCED JCONC FILE : " + fileName);
+                readModelbyFile(fileName);
 
-			System.out.println("Error reading file " + fileName);
-		}
-
-		createModel(str);
-		if(isApplet == false)
-			loadViewer();
+    }else{
+                readModelbyFile(fileName);
 	}
 	//End of Introduced Code
     }
@@ -184,6 +174,26 @@ class Launcher {
 	return model;
     }
     
+    public static void readModelbyFile(String fileName){
+        String str = "";
+                try{
+			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			String string = br.readLine();
+			while(string!=null){
+				str+=string+"\n";
+				string = br.readLine();
+			}
+		}
+		catch(IOException e){
+
+			System.out.println("Error reading file " + fileName);
+		}
+                
+		createModel(str);
+		if(isApplet == false)
+			loadViewer();
+                
+    }
 
     public static void createModel (String data) {
         int numPar = 0;
