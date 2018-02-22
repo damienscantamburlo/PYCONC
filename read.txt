@@ -1,0 +1,47 @@
+Material types :
+
+1. Steel
+2. StrucSteel
+3. Conc
+4. ConcWithfct
+
+
+Material Number :
+ Concrete	:	1,blue 
+ Steel		:	2,red
+ 
+What are nodes?
+What are mates?
+Elements - basic triangular  
+Conc3N,Conc4n?
+eta?
+
+types of materials?
+
+
+Saving the images under the name of a file :
+png, eps images.
+
+parameter returns the thickness of the element
+
+9th may
+
+Function - saveResults (Viewer.java) 
+
+It takes a string as an input by which you can save the appropriate image, means you can directly save the stress, load, deformed images
+without explicitly going to each view, it makes a drawing canvas by itself.
+
+
+The value of loadsteps in the fucntion createModel() in Launcher.java has been changed from 20 to 2.
+
+
+10th May
+*********
+
+I am passing the viewer class as a parameter when it creates the jconc object because then only we can have a pointer to the inital object of viewer where we can reload the new changed model. This is not a very good idea, but a workable way which is yet to be decided.
+
+the following changes will be made :
+
+passing Viewer's object to Jconc then passing the Jconc object to ModelWriter.
+
+Its not working, ultimate saviour is java threads. If this doesn't work then its trouble. 
