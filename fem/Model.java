@@ -7,9 +7,14 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import net.cercis.jconc.ui.Jconc;
+import java.util.Set;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 public class Model {
-
+    
     private Map mNodes = new TreeMap();
     private Map mElems = new TreeMap();
     private Map mMates = new TreeMap();
@@ -18,6 +23,7 @@ public class Model {
     private String version; //introduced variable --- rohit
     private int steps; //Introduced variable ---- rohit
     private double scaleForces = 1;
+    public int bondslip = 0;
 
     public Model () {
 
@@ -110,7 +116,7 @@ public class Model {
     public double getScaleForces () {
        return scaleForces;
     }
-
+                
     public void addNode (int id, float x, float y) {
 	mNodes.put(new Integer (id), new Node(id,x,y));
     }
@@ -152,6 +158,66 @@ public boolean checkNode (int id) {
 	}
    return s;
 }
+        
+        
+   public void duplicate_nodes(){
+       
+       //Init container
+       List<Node> list_specialElements = new ArrayList<Node>();
+       int numNodes = mNodes.size();
+       int j = 0;
+       Set keys = mNodes.keySet();
+       
+       //Get the maximum key (original point are not necessarly sorted!)
+       int max_key = -10;
+       for (Iterator i = keys.iterator(); i.hasNext();) {
+          Integer key = (Integer) i.next();
+          Node node = (Node) mNodes.get(key);
+          //Check key
+          if (key > max_key){
+              max_key = key;
+          }
+       }
+
+       //Iterate through nodes and collect the ones that need to be doubled
+       for (Iterator i = keys.iterator(); i.hasNext();) {
+          Integer key = (Integer) i.next();
+          Node node = (Node) mNodes.get(key);
+          boolean result = node.is_connectedToBar();
+            if (result == true){
+                ((Node) mNodes.get(key)).doublon_id = max_key + j + 1;
+                list_specialElements.add(node);
+                j = j  + 1; 
+            }
+       }
+
+       // Create the new needed node
+       for(int i = 0; i < list_specialElements.size(); i++){        
+           mNodes.put(new Integer (max_key + i  + 1),new Node(max_key + i + 1,(float) list_specialElements.get(i).getX(),(float)list_specialElements.get(i).getY()));
+           ((Node) (mNodes.get(new Integer (max_key + i + 1)))).clearConcreteElement();
+       }
+       
+       // Delete useless information on concrete node
+       for (Iterator i = keys.iterator(); i.hasNext();) {
+          Integer key = (Integer) i.next();
+          Node node = (Node) mNodes.get(key);
+          if (node.is_concreteNode() == true){
+               ((Node) mNodes.get(key)).clearBarElement();
+           } 
+       }
+
+       // See the result
+       Iterator itNodes_3 = ((Collection) mNodes.values()).iterator();
+       while (itNodes_3.hasNext()) {
+           Node node = (Node) itNodes_3.next();
+           System.out.println(node);
+           System.out.println("---------------");
+       }
+       
+      
+   }
+   
+       
 
     
    public void addMate (int id, String ident, double fc, double modEl) {
@@ -814,6 +880,19 @@ mMates.put(new Integer (id), mi);
 	    }
 	}
 	return ret;
+    }
+    
+    
+    
+    public void set_bondslipState(int state){
+        if (state == 1){
+            bondslip = 1;
+        }else if (state == 0){
+            bondslip = 0;
+        }else{
+            throw new java.lang.Error("Invalid choice.");
+        }
+
     }
 
     public String printReactions () {

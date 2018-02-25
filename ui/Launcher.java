@@ -480,7 +480,31 @@ class Launcher {
           scaleForces = Double.parseDouble(st2.nextToken());
           model.setScaleForces(scaleForces);
        }
+       else if (comp.equals("bondslip")){
+           String bondslip_state = st2.nextToken();
+           if (bondslip_state.equals("on") || bondslip_state.equals("off")){
+               //The choice is valid
+               if (bondslip_state.equals("on")){
+                   System.out.println("ADVANCED MODEL OPTION : The bondslip effect will be taken into consideration.");
+                   model.set_bondslipState(1);
+               }else{
+                   System.out.println("ADVANCED MODEL OPTION : The bondslip effect will NOT be taken into consideration.");
+                   model.set_bondslipState(0);
+               }
+           }else{
+               //That's not permitted
+               throw new java.lang.Error("Please provid a valid option for the bondslip status -> on/off.");
+           }
+
+       }
 	}
+        
+        // Threat the model if necessary (for bondslip effect consideration)
+        if (model.bondslip == 1){
+            model.duplicate_nodes();
+        }
+            
+        
 
 	if(loadSteps != 0) //modified code --- rohit
 		messages += solveModel(loadSteps);
